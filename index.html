@@ -484,6 +484,69 @@
 
 
   
+    <article id="post-I-String" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="2021/03/21/I-String/" class="article-date">
+      <time datetime="2021-03-21T13:04:00.000Z" itemprop="datePublished">2021-03-21</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="2021/03/21/I-String/">I-String</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/12986/I">传送门</a></p>
+<p>知识点 线段树区间合并，没学过的话可以<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P2894">点这里</a><br>md赛中我还以为是啥牛逼数据结构配合哈希的神仙东西<br>结果万万没想到用差值为0来处理相等的情况…..我们维护一个长度为 $n$ 的序列，每个位置的权值是 $a[i] - b[i]$ 取模 $26$ 意义下的数字, 对于每次查询就是找一个最长的前缀$0$,<br>考虑在每一个节点维护一个 $len[26]$ 数组，$len[i]$ 代表这个节点维护的区间前缀i的长度，注意必须是前缀，即从 $l$ 开始记录，显然 $Tree[1].len[0]$ 就是答案<br>考虑如何维护修改操作，对于单点修改好处理，直接修改对应权值的长度为1，其余为0就可以了<br>对于区间加一操作，就是整体往后偏移一次，也就是 $len[i] = len[i - 1]$ ，对于 $push_up$ 函数的书写，我们采用线段树区间合并的思想，对于每个 $len[i]$ 先初始化为 左儿子的对应答案，如果长度等于左儿子的区间长度，则加上右儿子就可以了<br>给出代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> de(x)   cerr &lt;&lt; <span class="meta-string">&quot;  dbeug  &quot;</span> &lt;&lt; #x &lt;&lt; <span class="meta-string">&quot;  ==  &quot;</span> &lt;&lt; x &lt;&lt;  endl;</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">1e5</span> + <span class="number">7</span>;</span><br><span class="line"><span class="keyword">int</span> n, m;</span><br><span class="line"><span class="keyword">char</span> str1[maxn], str2[maxn];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ls    (rt &lt;&lt; 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> rs    (rt &lt;&lt; 1|1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> md    ((l + r) &gt;&gt; 1)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SegTree</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> tag, len[<span class="number">26</span>], ans;</span><br><span class="line">&#125; Tree[maxn &lt;&lt; <span class="number">2</span>];</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">push_up</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; ++ i) &#123;</span><br><span class="line">        Tree[rt].len[i] = Tree[ls].len[i];</span><br><span class="line">        <span class="keyword">if</span>(Tree[rt].len[i] == (md - l + <span class="number">1</span>)) Tree[rt].len[i] += Tree[rs].len[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">addtag</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> tag)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!tag) <span class="keyword">return</span> ;</span><br><span class="line">    <span class="keyword">int</span> tmp[<span class="number">26</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; ++ i) tmp[i] = Tree[rt].len[i];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; ++ i) &#123;</span><br><span class="line">        <span class="keyword">int</span> last = (i - tag) % <span class="number">26</span>;</span><br><span class="line">        last = (last + <span class="number">26</span>) % <span class="number">26</span>;</span><br><span class="line">        Tree[rt].len[i] = tmp[last];</span><br><span class="line">    &#125;</span><br><span class="line">    Tree[rt].tag += tag;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">push_down</span><span class="params">(<span class="keyword">int</span> rt)</span> </span>&#123;</span><br><span class="line">    addtag(ls, Tree[rt].tag);</span><br><span class="line">    addtag(rs, Tree[rt].tag);</span><br><span class="line">    Tree[rt].tag = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">build</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(Tree[rt].len, <span class="number">0</span>, <span class="keyword">sizeof</span>(Tree[rt].len));</span><br><span class="line">    Tree[rt].tag = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(l == r) &#123;</span><br><span class="line">        <span class="keyword">int</span> id = str1[l] - str2[l];</span><br><span class="line">        id = (id % <span class="number">26</span> + <span class="number">26</span>) % <span class="number">26</span>;</span><br><span class="line">        ++ Tree[rt].len[id];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        build(ls, l, md);</span><br><span class="line">        build(rs, md + <span class="number">1</span>, r);</span><br><span class="line">        push_up(rt, l, r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ins</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> l, <span class="keyword">int</span> r, <span class="keyword">int</span> pos, <span class="keyword">int</span> be)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(l == r) &#123;</span><br><span class="line">        <span class="built_in">memset</span>(Tree[rt].len, <span class="number">0</span>, <span class="keyword">sizeof</span>(Tree[rt].len));</span><br><span class="line">        ++ Tree[rt].len[be];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        push_down(rt);</span><br><span class="line">        <span class="keyword">if</span>(pos &lt;= md) ins(ls, l, md, pos, be);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ins(rs, md + <span class="number">1</span>, r, pos, be);</span><br><span class="line">        &#125;</span><br><span class="line">        push_up(rt, l, r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">updata</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> l, <span class="keyword">int</span> r, <span class="keyword">int</span> L, <span class="keyword">int</span> R)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(l == L &amp;&amp; r == R) &#123;</span><br><span class="line">        addtag(rt, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    push_down(rt);</span><br><span class="line">    <span class="keyword">if</span>(R &lt;= md) updata(ls, l, md, L, R);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(L &gt;= md + <span class="number">1</span>) updata(rs, md + <span class="number">1</span>, r, L, R);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        updata(ls, l, md, L, md);</span><br><span class="line">        updata(rs, md + <span class="number">1</span>, r, md + <span class="number">1</span>, R);</span><br><span class="line">    &#125;</span><br><span class="line">    push_up(rt, l, r);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%s %s&quot;</span>, str1 + <span class="number">1</span>, str2 + <span class="number">1</span>);</span><br><span class="line">    build(<span class="number">1</span>, <span class="number">1</span>, n);</span><br><span class="line">    <span class="keyword">while</span>(m --) &#123;</span><br><span class="line">        <span class="keyword">int</span> x; <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;x);</span><br><span class="line">        <span class="keyword">if</span>(x == <span class="number">3</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, Tree[<span class="number">1</span>].len[<span class="number">0</span>]);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(x == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> pos; <span class="keyword">char</span> op[<span class="number">10</span>];</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">&quot;%d %s&quot;</span>, &amp;pos, op);</span><br><span class="line">            <span class="keyword">int</span> v = op[<span class="number">0</span>] - str2[pos];</span><br><span class="line">            v %= <span class="number">26</span>;</span><br><span class="line">            v = (v + <span class="number">26</span>) % <span class="number">26</span>;</span><br><span class="line">            ins(<span class="number">1</span>, <span class="number">1</span>, n, pos, v);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> l, r; <span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>, &amp;l, &amp;r);</span><br><span class="line">            updata(<span class="number">1</span>, <span class="number">1</span>, n, l, r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
+  
     <article id="post-F-Strange-Memory" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -1030,68 +1093,6 @@
       
     <div class="article-tag tagcloud">
         <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/%E5%9B%BE%E8%AE%BA/" rel="tag">图论</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-数据结构杂题" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="2021/02/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%9D%82%E9%A2%98/" class="article-date">
-      <time datetime="2021-02-20T14:52:16.000Z" itemprop="datePublished">2021-02-20</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="2021/02/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%9D%82%E9%A2%98/">数据结构杂题</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/CF893F">CF893F</a><br>由于最值不满足前缀性，不能相减，所以考虑以深度为时间轴，$dfs$ 序为坐标建立主席树<br>之后在主席树上二分求值就可以了，注意这题由于 $dep[x] + k$ ，可能会超过最大深度，所以应该取 $min$ 为 $min(mxdep, dep[x] + k)$ 这里的 $madep$ 不一定是 $n$, 应该取值为实际最大的深度  <a target="_blank" rel="noopener" href="https://paste.ubuntu.com/p/vmN5nGWBqG/">solution</a><br><a target="_blank" rel="noopener" href="https://loj.ac/p/121">Loj121</a><br>在线做法不会，离线的话考虑线段树分治，以时间轴为坐标，然后记录下每条边出现以及消失的时间，采用标记永久化，配合可撤销并查集在线段树上进行分治就可以了  <a target="_blank" rel="noopener" href="https://loj.ac/s/1066234">solution</a><br><a target="_blank" rel="noopener" href="https://codeforces.ml/problemset/problem/482/B">CF 275 div1 B</a><br>考虑按二进制位算贡献，由位运算特性可知，如果被 &amp;出来的数字在二进制上第 $k$ 位是 $1$, 那么这一连续的区间第 $k$ 位应该都是1，反之则不能全是1<br>考虑对每一位进行线段树处理，初始为0，然后对必须为 $1$ 的区间全都置为 $1$, 之后对每一个为 $0$ 的区间判断是否不全是1，之有对于二进制的每一位且所有要求都成立时才行<br>在验证的过程中不断给每个位置的二进制赋值就可以得到方案了<br>总体复杂度应该是 $O(30 * n * logn)$ 很遗憾，超时了，考虑优化掉 $log$, 注意这里修改和查询是完全分开的两部分，所以我们可以对修改进行差分操作，查询之前修改为正式数组，之后就可以优化掉线段树的 $logn$ 了<br><a target="_blank" rel="noopener" href="https://codeforces.ml/problemset/submission/482/108818849">solution</a><br><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/CF240F">CF240F TorCoder</a><br>权值线段树维护每个字母出现的下标，可以先看<a target="_blank" rel="noopener" href="http://iyua.top/2021/02/01/01%E5%BA%8F%E5%88%97%E5%A4%84%E7%90%86sort-%E7%BA%BF%E6%AE%B5%E6%A0%91/">这篇博客</a>, 这题算是强化版，思路大致一样，只不过排序变成了回文串，首先判定回文串就是区间内奇数个数的字母不能大于一个，字典序最小就是从小到大对称放每一个字母，对于奇数个数的那个字母留一个最后放在中心就行了<br><a target="_blank" rel="noopener" href="https://paste.ubuntu.com/p/Gsy6pWhB9y/">solution</a><br><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/CF383C">CF383 C Propagating tree</a><br>这题有点妙的阿，首先当然是一个树链剖分，之后我想了好久都没想明白怎么下放 $tag$ 来维护，最后看的题解才明白，我直接维护两个线段树，一个维护奇数深度，一个维护偶数深度，修改时直接暴力修改，奇数树上修改的偶数节点是错的，但并不妨碍，查询时奇数在奇数深度的树上查询，偶数在偶数深度的树上查询就行了，对应的信息是对的<br><a target="_blank" rel="noopener" href="https://paste.ubuntu.com/p/G5wqSwm5cw/">solution</a><br><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P1503">洛谷P1503</a><br>很显然是线段树维护区间合并，但是输出具体每个点处于的最长段。。我熟练度可能还不够就不会搞，考虑将倒塌的赋值为1，正常的赋值为0，那么这题就是单调修改，查询每个点前趋后继的1的位置，中间的长度就是答案，前趋后继按照平衡树的思想，树上二分就行了，注意特判被查询的点已经被覆盖<br><a target="_blank" rel="noopener" href="https://paste.ubuntu.com/p/G4rTwD8PpK/">solution</a><br><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/CF522D">CF522D Closest Equals</a><br>这凭什么黑题难度啊？也就紫题吧<br>$O(n)$ 遍历求出每个位置向右找到的第一个相等的权值之间的距离为这个点的权值，之后右子树主席树查询大于等于 $l$ 区间的最小值就可以了<br><a target="_blank" rel="noopener" href="https://paste.ubuntu.com/p/ncvbsQWt7h/">solution</a></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a></li></ul>
     </div>
 
       
